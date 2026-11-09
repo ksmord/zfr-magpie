@@ -1,8 +1,17 @@
 # zfr-magpie
 
+<img src="./assets/icon.png" width="112" align="right" alt="zfr-magpie" />
+
 把本地 [zfr-core](https://github.com/wayne091106-hash/zfr-core) 网关接进 [Magpie](https://usemagpie.ai) / OpenCode 的 provider 插件。
 
 Magpie 里多一个叫 **ZFR Core (local)** 的 provider，模型列表从你本机的 zfr 网关实时拉。
+
+```sh
+magpie plugin add zfr-magpie      # 发布后
+magpie plugin add ./              # 本地开发
+zfr serve --bind 127.0.0.1:18788  # 先起网关
+```
+
 
 ---
 
