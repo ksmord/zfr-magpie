@@ -1,0 +1,14 @@
+# NOTICE
+
+本项目的 API 设计与配置语义参考并适配自：
+
+- **zfr-core** — https://github.com/wayne091106-hash/zfr-core
+  Copyright (c) 2026 wayne091106-hash，MIT License。
+  本项目**不包含** zfr-core 的 Rust 源码，只通过其本地 HTTP 接口（默认
+  `http://127.0.0.1:18788/v1`）交互。运行前需自行安装 zfr-core。
+
+本项目的插件契约参考并遵循：
+
+- **Magpie / OpenCode 插件规范** — https://usemagpie.ai/docs/plugins
+- **magpie-community/plugins** — https://github.com/magpie-community/plugins
+  （插件包结构、`config` / `auth` / `provider` hook 用法）

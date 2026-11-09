@@ -1,0 +1,47 @@
+{
+  "name": "zfr-magpie",
+  "version": "0.1.0",
+  "description": "Magpie / OpenCode provider plugin that fronts the local zfr-core gateway (OpenCode Zen + Kilo free models with multi-egress IP rotation).",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": {
+    ".": "./index.mjs"
+  },
+  "files": [
+    "index.mjs",
+    "provider.mjs",
+    "models.mjs",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "keywords": [
+    "magpie",
+    "opencode",
+    "opencode-plugin",
+    "zfr",
+    "zfr-core",
+    "zen",
+    "kilo",
+    "egress-rotation"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ksmord/zfr-magpie"
+  },
+  "bugs": {
+    "url": "https://github.com/ksmord/zfr-magpie/issues"
+  },
+  "scripts": {
+    "check": "node --check index.mjs && node --check provider.mjs && node --check models.mjs",
+    "upstream": "node scripts/check-upstream.mjs"
+  },
+  "magpie": {
+    "maxConcurrency": 2,
+    "upstream": "wayne091106-hash/zfr-core"
+  }
+}

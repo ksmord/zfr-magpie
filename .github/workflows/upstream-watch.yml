@@ -1,0 +1,61 @@
+name: upstream-watch
+
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 比对上游 zfr-core
+        id: check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set +e
+          node scripts/check-upstream.mjs --json > upstream.json
+          code=$?
+          cat upstream.json
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          set -e
+
+      - name: 有更新就开工单（同 sha 去重）
+        if: steps.check.outputs.code == '1'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SHA=$(node -e "console.log(require('./upstream.json').latest)")
+          SHORT=${SHA:0:7}
+          TITLE="upstream: zfr-core 更新到 ${SHORT}"
+          if gh issue list --state open --search "$TITLE in:title" --json number --jq 'length' | grep -qv '^0$'; then
+            echo "已有同 sha 的工单，跳过"
+            exit 0
+          fi
+          {
+            echo "上游 \`wayne091106-hash/zfr-core\` 更新到 \`${SHA}\`。"
+            echo
+            echo '```json'
+            cat upstream.json
+            echo '```'
+            echo
+            echo "## 适配检查清单"
+            echo "- [ ] \`/v1/models\` 返回字段是否变化（\`data[].id\`、\`context_length\`、\`max_output_tokens\`、\`reasoning\`、\`tool_call\`）→ \`models.mjs\`"
+            echo "- [ ] 鉴权方式是否变化（当前：可选 \`--api-key\`，Bearer）→ \`provider.mjs\`"
+            echo "- [ ] 默认端口是否变化（当前 18788）→ \`models.mjs\` / README"
+            echo "- [ ] 上游 README 有没有新增插件相关能力可以暴露到 Magpie"
+            echo
+            echo "适配完成后运行 \`node scripts/check-upstream.mjs --write\` 并提交 \`.upstream.json\`。"
+          } > /tmp/body.md
+          gh issue create --title "$TITLE" --body-file /tmp/body.md
