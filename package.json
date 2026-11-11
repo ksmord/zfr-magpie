@@ -1,7 +1,7 @@
 {
   "name": "zfr-magpie",
-  "version": "0.1.1",
-  "description": "Magpie / OpenCode provider plugin that fronts the local zfr-core gateway (OpenCode Zen + Kilo free models with multi-egress IP rotation).",
+  "version": "0.0.1",
+  "description": "Self-contained Magpie provider plugin: zfr-core multi-egress IP rotation, OpenCode v2.1.3 protocol fingerprint, cooldown failover — pure JS/TS, no Rust, no sidecar, no gateway.",
   "type": "module",
   "main": "./index.mjs",
   "exports": {
@@ -9,8 +9,7 @@
   },
   "files": [
     "index.mjs",
-    "provider.mjs",
-    "models.mjs",
+    "src/",
     "README.md",
     "LICENSE",
     "NOTICE",
@@ -20,17 +19,19 @@
   ],
   "keywords": [
     "magpie",
+    "magpie-plugin",
     "opencode",
     "opencode-plugin",
     "zfr",
     "zfr-core",
     "zen",
     "kilo",
-    "egress-rotation"
+    "egress-rotation",
+    "failover"
   ],
   "license": "MIT",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "repository": {
     "type": "git",
@@ -40,9 +41,9 @@
     "url": "https://github.com/ksmord/zfr-magpie/issues"
   },
   "scripts": {
-    "check": "node --check index.mjs && node --check provider.mjs && node --check models.mjs",
-    "upstream": "node scripts/check-upstream.mjs",
-    "test": "node --test test/"
+    "check": "node --check index.mjs && node --check src/catalog.mjs && node --check src/constants.mjs && node --check src/egress.mjs && node --check src/fingerprint.mjs && node --check src/netutil.mjs && node --check src/plugin.mjs && node --check src/router.mjs && node --check src/sse.mjs && node --check src/transport.mjs",
+    "test": "node test/test-unit.mjs",
+    "upstream": "node scripts/check-upstream.mjs"
   },
   "magpie": {
     "maxConcurrency": 2,

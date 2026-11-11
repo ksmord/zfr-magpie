@@ -1,11 +1,11 @@
 {
   "package": "zfr-magpie",
-  "name": "ZFR Core (local)",
+  "name": "ZFR Core (multi-egress)",
   "icon": "https://raw.githubusercontent.com/ksmord/zfr-magpie/main/assets/icon.png",
   "providers": ["zfr"],
   "community": true,
   "summary": {
-    "en": "Local zfr-core gateway as a Magpie provider: multi-egress IP rotation, retry and rate-limit layer in front of OpenCode Zen / Kilo free models. Requires `zfr serve` on the same machine.",
-    "zh": "把本机 zfr-core 网关接成 Magpie provider：在 OpenCode Zen / Kilo 免费模型前面加多出口 IP 轮换、重试与限流层。需要本机先跑 `zfr serve`。"
+    "en": "Self-contained Magpie provider: zfr-core multi-egress IP rotation, OpenCode v2.1.3 protocol fingerprint, cooldown failover — pure JS, no Rust, no sidecar, no external gateway.",
+    "zh": "自包含 Magpie provider：多出口 IP 轮换、OpenCode v2.1.3 协议伪装、冷却式故障切换——纯 JS，无 Rust、无 sidecar、无需外部网关。"
   }
 }
