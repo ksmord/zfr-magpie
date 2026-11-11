@@ -32,6 +32,8 @@ async function gh(path, token) {
       'user-agent': 'zfr-magpie-upstream-check',
       ...(token ? { authorization: `Bearer ${token}` } : {}),
     },
+    // 防止 CI 在 GitHub API 半挂时卡死
+    signal: AbortSignal.timeout(15000),
   })
   if (!res.ok) throw new Error(`GitHub ${res.status} ${res.statusText} for ${path}`)
   return res.json()

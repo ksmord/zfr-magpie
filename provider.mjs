@@ -22,11 +22,18 @@ function resolveBaseUrl(env = process.env) {
 export default async function zfrPlugin(_input = {}) {
   const baseURL = resolveBaseUrl()
   let cache = null
+  let cacheAt = 0
+  const MODEL_TTL_MS = 30_000
 
   async function getModels(force = false) {
-    if (!force && cache) return cache
-    cache = await resolveModels(baseURL)
-    return cache
+    if (!force && cache && Date.now() - cacheAt < MODEL_TTL_MS) return cache
+    const result = await resolveModels(baseURL)
+    // 空表不缓存：网关晚于 magpie 启动时，下次调用会重新探测，不需要重启
+    if (result.source !== 'none') {
+      cache = result
+      cacheAt = Date.now()
+    }
+    return result
   }
 
   const hooks = {
@@ -39,13 +46,16 @@ export default async function zfrPlugin(_input = {}) {
       // 用户已在 magpie 配置里手写过 models 的，不覆盖
       const mergedModels = { ...models, ...(prev.models || {}) }
 
+      // api 与 options.baseURL 用同一套优先级，避免两处指向不同地址
+      const apiBase = (prev.options && prev.options.baseURL) || prev.api || baseURL
+
       config.provider[PROVIDER_ID] = {
         ...prev,
         name: prev.name || 'ZFR Core (local)',
         npm: prev.npm || '@ai-sdk/openai-compatible',
-        api: prev.api || baseURL,
+        api: apiBase,
         ...(Object.keys(mergedModels).length ? { models: mergedModels } : {}),
-        options: { baseURL, ...(prev.options || {}) },
+        options: { baseURL: apiBase, ...(prev.options || {}) },
       }
 
       if (source === 'none') {
